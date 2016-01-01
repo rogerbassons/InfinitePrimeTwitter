@@ -35,7 +35,7 @@ if statuses:
     p = int(statuses[0].text)
 print "It will start to tweet prime numbers bigger than %s" % p
 
-seconds = 8*60 # every 8 hours
+seconds = 8*60*60 # every 8 hours
 t = datetime.datetime.now()
 delta = datetime.timedelta(0, seconds)
 while(1):
