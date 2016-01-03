@@ -43,7 +43,7 @@ while(1):
     status = api.PostUpdate(p)
     print "Twitter status update: %s" % p
     while datetime.datetime.now() - t < delta:
-        time.sleep(seconds/2)
+        time.sleep(seconds)
     t = datetime.datetime.now()
 
     
