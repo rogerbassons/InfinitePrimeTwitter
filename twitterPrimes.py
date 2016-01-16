@@ -31,19 +31,26 @@ api = twitter.Api(config["consumer_key"], config["consumer_secret"], config["acc
 user = api.VerifyCredentials()
 statuses = api.GetUserTimeline(user_id=id, count=1)
 p = 0
+last = 0
 if statuses:
     p = int(statuses[0].text)
-print "It will start to tweet prime numbers bigger than %s" % p
+    last = datetime.datetime.strptime(statuses[0].created_at,'%a %b %d %H:%M:%S +0000 %Y')
+    print "It will start to tweet prime numbers bigger than %s" % p
 
-seconds = 8*60*60 # every 8 hours
-t = datetime.datetime.now()
-delta = datetime.timedelta(0, seconds)
+timeBetweenTweets = datetime.timedelta(0, seconds=8*60*60)
+delta = datetime.datetime.utcnow() - last
+if delta < timeBetweenTweets:
+    time.sleep(timeBetweenTweets.total_seconds() - delta.total_seconds())
+
+p = primeBiggerThan(p)
 while(1):
-    p = primeBiggerThan(p)
     status = api.PostUpdate(p)
     print "Twitter status update: %s" % p
-    while datetime.datetime.now() - t < delta:
-        time.sleep(seconds)
-    t = datetime.datetime.now()
-
+    p = primeBiggerThan(p)
     
+    statuses = api.GetUserTimeline(user_id=id, count=1)
+    last = datetime.datetime.strptime(statuses[0].created_at,'%a %b %d %H:%M:%S +0000 %Y')
+    
+    delta = datetime.datetime.utcnow() - last
+    if delta < timeBetweenTweets:
+        time.sleep(timeBetweenTweets.total_seconds() - delta.total_seconds())
